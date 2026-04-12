@@ -1,0 +1,156 @@
+# SupertonicTTS Hindi Configuration
+# Optimized for NVIDIA DGX Spark GB10 (128GB unified memory)
+
+project:
+  name: supertonic_hindi_tts
+  output_dir: ./outputs
+  seed: 42
+  mixed_precision: bf16  # GB10 supports BF16
+
+audio:
+  sample_rate: 44100
+  n_fft: 2048
+  hop_length: 512  # ~11.6ms
+  win_length: 2048
+  n_mels: 228
+  fmin: 0
+  fmax: null  # Nyquist
+
+latent:
+  dim: 24  # Low-dimensional latent space
+  compression_factor: 6  # Kc = 6
+  compressed_channels: 144  # Kc * C = 6 * 24
+
+text:
+  vocab_size: 256  # Unicode character-level (covers Devanagari + punctuation)
+  embed_dim: 128
+  max_text_len: 512
+
+speech_autoencoder:
+  encoder:
+    n_convnext_blocks: 10
+    hidden_dim: 512
+    intermediate_dim: 2048
+    kernel_size: 7
+    latent_dim: 24
+  decoder:
+    n_convnext_blocks: 10
+    hidden_dim: 512
+    intermediate_dim: 2048
+    kernel_size: 7
+    dilation_rates: [1, 2, 4, 1, 2, 4, 1, 1, 1, 1]
+    frame_channels: 512
+  discriminator:
+    mpd_periods: [2, 3, 5, 7, 11]
+    mpd_channels: [16, 64, 256, 512, 512, 1]
+    mrd_fft_sizes: [512, 1024, 2048]
+  training:
+    batch_size: 128
+    learning_rate: 0.0002
+    num_iterations: 1500000
+    lambda_recon: 45.0
+    lambda_adv: 1.0
+    lambda_fm: 0.1
+    crop_length_sec: 0.19
+    optimizer: adamw
+    weight_decay: 0.01
+
+text_to_latent:
+  text_encoder:
+    n_convnext_blocks: 6
+    n_self_attention_blocks: 4
+    n_cross_attention_blocks: 2
+    hidden_dim: 128
+    intermediate_dim: 512
+    kernel_size: 5
+    n_attention_heads: 4
+    attention_dim: 512
+  reference_encoder:
+    n_convnext_blocks: 6
+    n_cross_attention_blocks: 2
+    hidden_dim: 128
+    intermediate_dim: 512
+    kernel_size: 5
+    n_learnable_queries: 50
+  vf_estimator:
+    hidden_dim: 256
+    n_dilated_convnext: 4
+    n_standard_convnext: 2
+    intermediate_dim: 1024
+    kernel_size: 5
+    dilation_rates: [1, 2, 4, 8]
+    n_main_blocks: 4  # Nm = 4
+    time_embed_dim: 64
+  training:
+    batch_size: 64
+    expansion_factor: 4  # Ke = 4
+    learning_rate: 0.0005
+    num_iterations: 700000
+    lr_decay_every: 300000
+    lr_decay_factor: 0.5
+    sigma_min: 1.0e-8
+    p_uncond: 0.05
+    ref_crop_min_sec: 0.2
+    ref_crop_max_sec: 9.0
+    optimizer: adamw
+    weight_decay: 0.01
+    nfe: 32
+    cfg_scale: 3.0
+
+duration_predictor:
+  reference_encoder:
+    n_convnext_blocks: 4
+    n_cross_attention_blocks: 2
+    hidden_dim: 64
+    intermediate_dim: 256
+    kernel_size: 5
+    n_learnable_queries: 8
+  text_encoder:
+    n_convnext_blocks: 6
+    n_self_attention_blocks: 2
+    hidden_dim: 64
+    intermediate_dim: 256
+    kernel_size: 5
+    n_attention_heads: 2
+    attention_dim: 256
+  estimator:
+    hidden_dim: 164
+    output_dim: 1
+  training:
+    batch_size: 128
+    learning_rate: 0.0005
+    num_iterations: 3000
+    ref_crop_min_pct: 0.05
+    ref_crop_max_pct: 0.95
+    optimizer: adamw
+
+spfm:
+  enabled: true
+  warmup_iterations: 40000
+  interpolation_time: 0.5
+
+larope:
+  enabled: true
+  gamma: 10.0
+
+data:
+  train_manifest: ./data/train_manifest.json
+  val_manifest: ./data/val_manifest.json
+  test_manifest: ./data/test_manifest.json
+  audio_dir: ./data/audio
+  max_audio_duration: 30.0
+  min_audio_duration: 0.5
+  num_workers: 8
+
+evaluation:
+  metrics: [wer, cer, utmos, dnsmos, sim, pesq]
+  whisper_model: large-v2
+  utmos_model: sarulab-org/utmos22
+
+dgx_spark:
+  # NVIDIA DGX Spark GB10 specific settings
+  gpu_memory_gb: 128  # Unified memory
+  num_gpu: 1  # Single GB10 GPU
+  gradient_checkpointing: true
+  compile_model: true  # torch.compile for GB10
+  pin_memory: true

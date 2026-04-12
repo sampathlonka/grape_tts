@@ -1,0 +1,34 @@
+# SupertonicTTS Training Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+torch>=2.1.0
+torchaudio>=2.1.0
+torchvision>=0.16.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Audio processing
+librosa>=0.10.0
+soundfile>=0.12.0
+
+# Machine learning utilities
+scikit-learn>=1.3.0
+tqdm>=4.66.0
+
+# Configuration and logging
+PyYAML>=6.0
+tensorboard>=2.13.0
+wandb>=0.16.0
+
+# Development and utilities
+pandas>=2.0.0
+matplotlib>=3.7.0
+
+# Optional but recommended
+pytorch-lightning>=2.0.0  # For advanced training management
+amp-pytorch>=0.1.0  # Mixed precision utilities (optional)
+
+# NVIDIA CUDA optimizations (optional)
+# Install with CUDA 12.1 support:
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121

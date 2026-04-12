@@ -1,0 +1,50 @@
+# Stage 3: Duration Predictor Training Configuration
+# Based on paper Sections 3.3, 4.2
+
+# Output
+output_dir: "./outputs"
+
+# Device
+device: "cuda"
+seed: 42
+
+# Model architecture
+vocab_size: 256
+text_embed_dim: 256
+hidden_dim: 512
+num_layers: 2
+
+# Training parameters
+batch_size: 128
+num_iterations: 3000  # Very quick training
+num_samples: 5000
+
+# Optimizer
+lr: 5e-4
+weight_decay: 0.01
+
+# Learning rate scheduler
+decay_interval: 10000
+
+# Duration prediction
+min_duration: 0.5  # Minimum speech duration in seconds
+max_duration: 10.0  # Maximum speech duration in seconds
+
+# Reference speech (for context)
+# Random crop between 5% and 95% of input duration
+ref_min_ratio: 0.05
+ref_max_ratio: 0.95
+
+# Loss function
+# L1 loss for duration prediction
+loss_fn: "l1"
+
+# Mixed precision training
+use_amp: true
+
+# Checkpointing and validation
+val_interval: 500
+ckpt_interval: 1000
+
+# Gradient clipping
+max_grad_norm: 1.0

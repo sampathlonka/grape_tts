@@ -1,0 +1,25 @@
+hindi:
+  language_code: hi
+  script: Devanagari
+  unicode_range: [0x0900, 0x097F]
+
+  # Hindi-specific characters
+  vowels: "अआइईउऊऋएऐओऔ"
+  consonants: "कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह"
+  matras: "ािीुूृेैोौंःँ"
+  special: "्ॐ।॥"
+  punctuation: ".,!?;:'-\"()[] "
+  numerals: "०१२३४५६७८९"
+
+  # Text normalization
+  normalize_nukta: true
+  normalize_chandrabindu: true
+  expand_abbreviations: true
+
+  # Whisper ASR for evaluation
+  whisper_language: Hindi
+
+  # Audio processing
+  silence_threshold_db: -40
+  min_silence_duration_ms: 300
+  vad_aggressiveness: 2

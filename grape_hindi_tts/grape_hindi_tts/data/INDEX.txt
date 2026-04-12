@@ -1,0 +1,375 @@
+================================================================================
+SUPERTONIC HINDI TTS DATA PIPELINE - FILE INDEX
+================================================================================
+
+PROJECT LOCATION:
+/sessions/kind-sleepy-carson/mnt/tts_training/supertonic_hindi_tts/supertonic_hindi_tts/data/
+
+================================================================================
+CORE MODULES (5 Python files - 2,184 lines)
+================================================================================
+
+1. hindi_text_processor.py (406 lines)
+   Class: HindiTextProcessor
+   - Unicode normalization (NFC)
+   - Devanagari script handling
+   - Number-to-word conversion (123 → "एक सौ तेईस")
+   - Abbreviation expansion
+   - Punctuation normalization
+   - Character-level tokenization
+   - Vocabulary: ~270 tokens
+   - Text ↔ token_ids conversion
+   Methods:
+     - normalize_unicode() - NFC normalization
+     - expand_abbreviations() - Expand common abbreviations
+     - normalize_punctuation() - Standardize punctuation
+     - number_to_words_hindi() - Convert int to Hindi
+     - normalize_text() - Complete pipeline
+     - text_to_token_ids() - Text to IDs
+     - token_ids_to_text() - IDs back to text
+     - get_vocab_size() - Vocabulary size
+
+2. audio_processor.py (389 lines)
+   Class: AudioProcessor
+   - Audio loading (librosa backend)
+   - Resampling (44100 Hz configurable)
+   - Mel spectrogram (228 bins, log-scaled)
+   - Voice Activity Detection
+   - Silence trimming
+   - Peak/RMS normalization
+   - Audio segmentation with overlap
+   - Griffin-Lim reconstruction (debug)
+   Methods:
+     - load_audio() - Load WAV/MP3/etc
+     - resample_audio() - Resample to target SR
+     - normalize_audio() - Peak/RMS normalization
+     - compute_vad_energy() - Energy-based VAD
+     - trim_silence() - Remove leading/trailing silence
+     - compute_mel_spectrogram() - Log-scaled mel
+     - segment_long_audio() - Split with overlap
+     - get_audio_duration() - Duration in seconds
+     - compute_rms_energy() - RMS energy value
+
+3. dataset.py (485 lines)
+   Classes:
+     - HindiTTSDataset - Text-to-speech training dataset
+     - AutoencoderDataset - Speech autoencoder training
+     - TTLDataset - Text-to-latent training
+   Collate functions:
+     - collate_tts_batch() - Pad sequences and mel specs
+     - collate_autoencoder_batch() - Stack audio tensors
+     - collate_ttl_batch() - Handle latent tensors
+   Features:
+     - JSON manifest format
+     - Lazy audio loading
+     - Text normalization
+     - Mel computation
+     - Batch padding
+     - Speaker tracking
+     - Duration metadata
+
+4. prepare_dataset.py (521 lines)
+   Class: DatasetPreparer
+   - Audio validation (format, duration, silence)
+   - Transcript loading (TSV format)
+   - Text normalization
+   - Train/val/test splitting (speaker-balanced)
+   - Mel spectrogram statistics
+   - Per-speaker statistics
+   - JSON manifest generation
+   - Report generation
+   Methods:
+     - _load_transcripts() - Load TSV transcripts
+     - _validate_audio() - Validate audio files
+     - _compute_silence_ratio() - VAD-based silence check
+     - prepare_dataset() - Main pipeline
+     - _split_dataset() - Speaker-balanced splitting
+     - _compute_statistics() - Mel stats, speaker stats
+     - _save_manifests() - Save JSON manifests
+     - _generate_report() - Create text report
+
+5. precompute_latents.py (343 lines)
+   Classes:
+     - LatentPrecomputer - Compute latents from autoencoder
+     - LatentNormalizer - Normalize/denormalize latents
+   Features:
+     - Model loading
+     - Batch encoding
+     - Latent file saving (.npy)
+     - Normalization statistics
+     - Error tracking
+   Methods:
+     - load_model() - Load trained autoencoder
+     - encode_audio() - Encode mel to latent
+     - precompute_latents_from_manifest() - Batch processing
+     - normalize() - Normalize latent vector
+     - denormalize() - Denormalize latent vector
+
+6. __init__.py (40 lines)
+   - Package initialization
+   - Clean API exports
+   - Version tracking
+   Exports:
+     - HindiTextProcessor
+     - AudioProcessor
+     - HindiTTSDataset, AutoencoderDataset, TTLDataset
+     - Collate functions (3x)
+     - DatasetPreparer
+     - LatentPrecomputer, LatentNormalizer
+
+================================================================================
+DOCUMENTATION FILES (3 files)
+================================================================================
+
+1. QUICK_START.md (3.3 KB)
+   - 5-minute setup guide
+   - Common task examples
+   - Troubleshooting
+   - File size reference
+   - Best for: Getting started quickly
+
+2. PIPELINE_DOCUMENTATION.md (11.8 KB)
+   - Complete API reference
+   - Module descriptions
+   - Usage examples
+   - Integration patterns
+   - Performance characteristics
+   - Dependencies
+   - Best practices
+   - Best for: Detailed understanding and reference
+
+3. INDEX.txt (this file)
+   - File listing and overview
+   - Quick module reference
+   - Usage patterns
+   - Best for: Navigation and quick lookup
+
+================================================================================
+EXAMPLE FILE
+================================================================================
+
+EXAMPLES.py (440 lines)
+- Complete usage examples for each module
+- Text normalization examples
+- Audio processing examples
+- Dataset creation examples
+- Dataset preparation workflow
+- Latent precomputation workflow
+- Complete training pipeline integration
+- Can be run directly: python EXAMPLES.py
+
+================================================================================
+QUICK REFERENCE - COMMON TASKS
+================================================================================
+
+TASK: Normalize Hindi text
+FILE: hindi_text_processor.py
+CODE: processor = HindiTextProcessor()
+      normalized = processor.normalize_text(text)
+      token_ids = processor.text_to_token_ids(text)
+
+TASK: Process audio
+FILE: audio_processor.py
+CODE: processor = AudioProcessor()
+      waveform, sr = processor.process_audio_file(audio_path)
+      mel_spec = processor.compute_mel_spectrogram(waveform)
+
+TASK: Create training dataset
+FILE: dataset.py
+CODE: dataset = HindiTTSDataset("manifest.json")
+      loader = DataLoader(dataset, collate_fn=collate_tts_batch)
+
+TASK: Prepare raw data
+FILE: prepare_dataset.py
+COMMAND: python prepare_dataset.py audio_dir transcripts.txt
+
+TASK: Precompute latents
+FILE: precompute_latents.py
+COMMAND: python precompute_latents.py model.pt manifest.json
+
+================================================================================
+API SUMMARY
+================================================================================
+
+TEXT PROCESSING:
+  HindiTextProcessor.normalize_text(text: str) → str
+  HindiTextProcessor.text_to_token_ids(text: str, add_special_tokens=True, max_length=None) → List[int]
+  HindiTextProcessor.token_ids_to_text(token_ids: List[int]) → str
+  HindiTextProcessor.number_to_words_hindi(num: int) → str
+  HindiTextProcessor.get_vocab_size() → int
+
+AUDIO PROCESSING:
+  AudioProcessor.process_audio_file(path: str, normalize=True, trim_silence=True) → Tuple[ndarray, int]
+  AudioProcessor.compute_mel_spectrogram(waveform: ndarray) → ndarray
+  AudioProcessor.segment_long_audio(waveform: ndarray, segment_length=32000, overlap=4000) → List[ndarray]
+  AudioProcessor.get_audio_duration(waveform: ndarray) → float
+
+DATASETS:
+  HindiTTSDataset(manifest_path: str) → Dataset
+  AutoencoderDataset(manifest_path: str) → Dataset
+  TTLDataset(manifest_path: str, latent_dir: str) → Dataset
+
+DATA PREPARATION:
+  DatasetPreparer(audio_dir: str, transcript_file: str, output_dir: str).prepare_dataset()
+
+LATENTS:
+  LatentPrecomputer(model_path: str, output_dir: str).precompute_latents_from_manifest()
+  LatentNormalizer(statistics_path: str).normalize(latent: ndarray) → ndarray
+
+================================================================================
+VOCABULARY SPECIFICATION
+================================================================================
+
+Total Size: ~270 tokens
+
+Special Tokens (4):
+  0: <PAD>  - Padding
+  1: <UNK>  - Unknown character
+  2: <BOS>  - Beginning of sequence
+  3: <EOS>  - End of sequence
+
+Devanagari (160 characters):
+  U+0900 to U+097F - All Devanagari script characters
+  Includes: vowels, consonants, matras, nukta, chandrabindu, etc.
+
+ASCII Punctuation & Space (6):
+  Space, period, comma, exclamation, question, colon, hyphen
+
+Total vocabulary is fixed and deterministic - same across all runs.
+
+================================================================================
+DATA FORMAT SPECIFICATIONS
+================================================================================
+
+TRANSCRIPT FILE (input to prepare_dataset.py):
+  Format: TSV with 4 columns
+  audio_filename.wav<TAB>hindi_text<TAB>speaker_id<TAB>gender
+  Encoding: UTF-8
+  Example:
+    sample_001.wav  नमस्ते दुनिया  speaker_001  M
+    sample_002.wav  यह परीक्षण है  speaker_002  F
+
+MANIFEST FILE (output from prepare_dataset.py, input to datasets):
+  Format: JSON
+  Content: Array of objects with keys:
+    - audio_path (string): Path to audio file
+    - text (string): Original Hindi text
+    - speaker_id (string): Speaker identifier
+    - duration (float): Audio duration in seconds
+    - gender (string): M/F or other
+  Encoding: UTF-8
+
+LATENT FILE (output from precompute_latents.py):
+  Format: NumPy .npy file
+  Content: 1D array of latent values (float32)
+  Naming: {audio_stem}.npy
+  Path: precomputed_latents/{audio_stem}.npy
+
+================================================================================
+CONFIGURATION PARAMETERS
+================================================================================
+
+TEXT PROCESSOR:
+  - Language: "hi" (fixed for Hindi)
+  - Special tokens: Fixed (PAD, UNK, BOS, EOS)
+  - Vocabulary: Fixed (270 tokens)
+
+AUDIO PROCESSOR:
+  - Sample rate: 44100 Hz (configurable)
+  - N_FFT: 2048 (configurable)
+  - Hop length: 512 (configurable)
+  - N_mels: 228 (configurable)
+  - Frequency range: 55 Hz to 22050 Hz (configurable)
+  - Window: Hann (fixed)
+
+DATASET:
+  - Max text length: 256 characters (configurable)
+  - Normalize text: True (configurable)
+  - Load audio: True/False (configurable)
+
+PREPARATION:
+  - Min duration: 0.5s (configurable)
+  - Max duration: 30s (configurable)
+  - Max silence ratio: 0.5 (configurable)
+  - Train/val/test split: 0.9/0.05/0.05 (configurable)
+
+================================================================================
+DEPENDENCIES
+================================================================================
+
+Required:
+  - torch >= 1.9.0
+  - torchaudio >= 0.9.0
+  - librosa >= 0.9.0
+  - numpy >= 1.19.0
+  - tqdm >= 4.50.0
+
+Optional:
+  - CUDA for GPU acceleration (audio processing)
+
+All modules are compatible with Python 3.7+
+
+================================================================================
+STATS & METRICS
+================================================================================
+
+Codebase:
+  - Total lines of code: 2,624
+  - Total lines (with docs): 3,200+
+  - Files: 6 core modules + 2 doc files + 1 example file
+  - Size: 192 KB (code only, no audio/data)
+
+Type Coverage:
+  - Full type hints on all public APIs
+  - NumPy/PyTorch type annotations
+  - IDE autocomplete support
+
+Documentation:
+  - Docstrings on all classes and public methods
+  - Usage examples in each module
+  - 3 dedicated documentation files
+  - Total documentation: ~500 lines
+
+Quality:
+  - All files pass Python syntax check
+  - Comprehensive error handling
+  - Edge case handling
+  - Production-ready code
+
+================================================================================
+USAGE EXAMPLES
+================================================================================
+
+See EXAMPLES.py for complete working examples:
+  1. Text normalization
+  2. Audio processing
+  3. Dataset creation
+  4. Dataset preparation
+  5. Latent precomputation
+  6. Complete training pipeline
+
+Run examples:
+  python EXAMPLES.py
+
+================================================================================
+INTEGRATION WITH SUPERTONIC TTS
+================================================================================
+
+This pipeline provides complete data handling for SupertonicTTS:
+
+1. Text Processing: Hindi-specific normalization with tokenization
+2. Audio Processing: Mel spectrograms with proper normalization
+3. Dataset Classes: PyTorch-compatible for easy training integration
+4. Data Preparation: Automatic validation and splitting
+5. Latent Support: For latent-based training approaches
+
+The pipeline is designed to be:
+  - Production-ready
+  - Scalable to large datasets
+  - Flexible and configurable
+  - Well-documented
+  - Type-safe with full hints
+
+================================================================================
+END OF INDEX
+================================================================================

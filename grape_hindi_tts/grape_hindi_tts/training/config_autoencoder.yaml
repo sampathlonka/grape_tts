@@ -1,0 +1,57 @@
+# Stage 1: Speech Autoencoder Training Configuration
+# Based on paper Section 4.2 and Appendix B.1
+
+# Output
+output_dir: "./outputs"
+
+# Device
+device: "cuda"
+seed: 42
+
+# Model architecture
+latent_dim: 128
+channels: 256
+
+# Training parameters
+batch_size: 128
+num_iterations: 1500000
+num_samples: 100000
+
+# Optimizer
+gen_lr: 2e-4
+disc_lr: 2e-4
+weight_decay: 0.01
+
+# Learning rate scheduler
+decay_interval: 300000
+
+# Loss weights (paper values)
+lambda_recon: 45      # Reconstruction loss weight
+lambda_adv: 1         # Adversarial loss weight
+lambda_fm: 0.1        # Feature matching loss weight
+
+# Mel spectrogram
+n_fft: 2048
+hop_length: 512
+n_mels: 228
+sample_rate: 44100
+
+# Adversarial training
+# Random crop 0.19s segments for training
+crop_duration: 0.19
+
+# MPD (Multi-Period Discriminator)
+mpd_periods: [2, 3, 5, 7, 11]
+
+# MRD (Multi-Resolution Discriminator)
+mrd_resolutions: [8, 16, 32]
+
+# Mixed precision training
+use_amp: true
+
+# Checkpointing and validation
+val_interval: 10000
+ckpt_interval: 50000
+
+# Gradient clipping
+max_grad_norm: 1.0

@@ -1,0 +1,69 @@
+# Stage 2: Text-to-Latent Module Training Configuration
+# Based on paper Sections 3.2.4, 4.2 and Algorithm 1
+
+# Output
+output_dir: "./outputs"
+
+# Device
+device: "cuda"
+seed: 42
+
+# Model architecture
+latent_dim: 128
+text_embed_dim: 256
+hidden_dim: 512
+num_layers: 4
+
+# Text encoder
+vocab_size: 256
+
+# Training parameters
+batch_size: 64
+num_iterations: 700000
+num_samples: 100000
+
+# Optimizer
+lr: 5e-4
+weight_decay: 0.01
+
+# Learning rate scheduler
+decay_interval: 300000
+
+# Flow matching parameters
+sigma_min: 1.0e-8
+
+# Classifier-free guidance
+use_classifier_free: true
+p_uncond: 0.05  # Probability of dropping text conditions
+
+# Context-sharing batch expansion
+# Ke=4: Create 4 noise-timestep pairs per sample
+context_expansion: 4
+
+# Reference speech (for context)
+# Random crop between min and max duration
+ref_min_duration: 0.2  # 0.2 seconds
+ref_max_duration: 9.0  # 9.0 seconds
+
+# SPFM (Self-Purifying Flow Matching)
+use_spfm: true
+spfm_warmup: 40000  # Warmup steps before SPFM kicks in
+spfm_threshold: 1.5  # Loss ratio threshold for flagging unreliable samples
+
+# Latent normalization
+# Channel-wise mean/var normalization for stability
+normalize_latents: true
+
+# Mixed precision training
+use_amp: true
+
+# Checkpointing and validation
+val_interval: 10000
+ckpt_interval: 50000
+
+# Precomputed latents (optional)
+# Path to precomputed latent tensor. If not provided, generates on-the-fly
+precomputed_latents_path: null
+
+# Gradient clipping
+max_grad_norm: 1.0
