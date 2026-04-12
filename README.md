@@ -109,14 +109,14 @@ Duration Prediction (in frames)
 ## Project Structure
 
 ```
-supertonic_hindi_tts/
+grape_hindi_tts/
 ├── README.md                          # This file
 ├── requirements.txt                   # Python dependencies
 ├── pyproject.toml                     # Package configuration
 ├── Makefile                           # Build and development commands
 ├── setup.py                           # Installation script
 │
-├── supertonic_hindi_tts/              # Main package
+├── grape_hindi_tts/              # Main package
 │   ├── __init__.py
 │   │
 │   ├── models/                        # Neural network modules
@@ -270,7 +270,7 @@ done
 # Columns: filename, transcript, speaker, gender, duration
 
 # Run preparation script
-python -m supertonic_hindi_tts.data.prepare_dataset \
+python -m grape_hindi_tts.data.prepare_dataset \
     --audio_dir dataset/audio \
     --transcript_file dataset/transcripts.tsv \
     --output_dir dataset/prepared \
@@ -284,8 +284,8 @@ python -m supertonic_hindi_tts.data.prepare_dataset \
 
 ```bash
 # Clone the repository
-git clone https://github.com/supertone/supertonic-hindi-tts.git
-cd supertonic-hindi-tts
+git clone https://github.com/supertone/grape-hindi-tts.git
+cd grape-hindi-tts
 
 # Create virtual environment
 python -m venv venv
@@ -302,7 +302,7 @@ pip install -e .
 # Organize audio files and create transcripts.tsv (see Dataset Preparation)
 
 # Prepare dataset (validate, split, preprocess)
-python -m supertonic_hindi_tts.data.prepare_dataset \
+python -m grape_hindi_tts.data.prepare_dataset \
     --audio_dir /path/to/audio \
     --transcript_file /path/to/transcripts.tsv \
     --output_dir ./data/prepared \
@@ -315,7 +315,7 @@ python -m supertonic_hindi_tts.data.prepare_dataset \
 
 ```bash
 # Start training from scratch
-python -m supertonic_hindi_tts.training.train_autoencoder \
+python -m grape_hindi_tts.training.train_autoencoder \
     --config configs/autoencoder.yaml \
     --data_dir ./data/prepared \
     --output_dir ./outputs/autoencoder \
@@ -325,7 +325,7 @@ python -m supertonic_hindi_tts.training.train_autoencoder \
     --use_wandb
 
 # Resume from checkpoint
-python -m supertonic_hindi_tts.training.train_autoencoder \
+python -m grape_hindi_tts.training.train_autoencoder \
     --config configs/autoencoder.yaml \
     --checkpoint ./outputs/autoencoder/checkpoint_latest.pt \
     --output_dir ./outputs/autoencoder
@@ -336,7 +336,7 @@ python -m supertonic_hindi_tts.training.train_autoencoder \
 Once the autoencoder is trained, convert audio to latent codes (much faster inference):
 
 ```bash
-python -m supertonic_hindi_tts.data.precompute_latents \
+python -m grape_hindi_tts.data.precompute_latents \
     --data_dir ./data/prepared \
     --autoencoder_checkpoint ./outputs/autoencoder/checkpoint_best.pt \
     --output_dir ./data/latents \
@@ -348,7 +348,7 @@ python -m supertonic_hindi_tts.data.precompute_latents \
 
 ```bash
 # Train TTS model
-python -m supertonic_hindi_tts.training.train_text_to_latent \
+python -m grape_hindi_tts.training.train_text_to_latent \
     --config configs/text_to_latent.yaml \
     --data_dir ./data/latents \
     --output_dir ./outputs/tts \
@@ -362,7 +362,7 @@ python -m supertonic_hindi_tts.training.train_text_to_latent \
 # Multi-GPU training
 python -m torch.distributed.launch \
     --nproc_per_node=8 \
-    -m supertonic_hindi_tts.training.train_text_to_latent \
+    -m grape_hindi_tts.training.train_text_to_latent \
     --config configs/text_to_latent.yaml \
     --distributed
 ```
@@ -371,7 +371,7 @@ python -m torch.distributed.launch \
 
 ```bash
 # Quick training (takes ~10 minutes)
-python -m supertonic_hindi_tts.training.train_duration \
+python -m grape_hindi_tts.training.train_duration \
     --config configs/duration_predictor.yaml \
     --data_dir ./data/latents \
     --output_dir ./outputs/duration \
@@ -387,7 +387,7 @@ python -m supertonic_hindi_tts.training.train_duration \
 
 ```bash
 # Compute metrics on test set
-python -m supertonic_hindi_tts.evaluation.evaluate \
+python -m grape_hindi_tts.evaluation.evaluate \
     --autoencoder_checkpoint ./outputs/autoencoder/checkpoint_best.pt \
     --tts_checkpoint ./outputs/tts/checkpoint_best.pt \
     --duration_checkpoint ./outputs/duration/checkpoint_best.pt \
@@ -402,7 +402,7 @@ python -m supertonic_hindi_tts.evaluation.evaluate \
 ### 8. Inference / Speech Synthesis
 
 ```python
-from supertonic_hindi_tts.evaluation.inference import Synthesizer
+from grape_hindi_tts.evaluation.inference import Synthesizer
 
 # Initialize model
 synthesizer = Synthesizer(
@@ -637,7 +637,7 @@ evaluation:
 ### Loading and Merging Configs
 
 ```python
-from supertonic_hindi_tts.utils import load_config, merge_configs
+from grape_hindi_tts.utils import load_config, merge_configs
 
 # Load base config
 base = load_config("configs/text_to_latent.yaml")
