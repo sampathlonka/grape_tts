@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a complete implementation of the GRAPE-TTS architecture for Hindi and Indian language text-to-speech synthesis. GRAPE-TTS is a state-of-the-art, lightweight TTS system developed by Supertone Inc., based on three research papers published at top-tier conferences.
+This repository contains a complete implementation of the GRAPE-TTS architecture for Hindi and Indian language text-to-speech synthesis. GRAPE-TTS is a state-of-the-art, lightweight TTS system inspired by Supertone Inc., based on three research papers and a paper on 'Geometric Representation of Positional Encoding' paper.
 
 **Key Characteristics:**
 - **Model Size:** 44M parameters (compact and efficient)
