@@ -284,7 +284,7 @@ python -m grape_hindi_tts.data.prepare_dataset \
 
 ```bash
 # Clone the repository
-git clone https://github.com/supertone/grape-hindi-tts.git
+git clone https://github.com/sampathlonka/grape-hindi-tts.git
 cd grape-hindi-tts
 
 # Create virtual environment
@@ -654,71 +654,10 @@ overrides = {
 config = merge_configs(base, overrides)
 ```
 
-## References
-
-GRAPE-TTS is based on three research papers from Supertone Inc:
-
-1. **"Vocos: Closing the gap between time-domain and Fourier-domain neural audio codecs"**
-   - Authors: Karakterov et al.
-   - Venue: ICLR 2024
-   - Key contribution: Efficient neural vocoder using Fourier features
-   - [Paper Link](https://arxiv.org/abs/2410.13629)
-
-2. **"Efficient Neural Audio Coding with Set-Quantized Variational Autoencoders"**
-   - Authors: Défossez et al.
-   - Venue: ICML 2023
-   - Key contribution: Set-based quantization for audio compression
-   - [Paper Link](https://arxiv.org/abs/2305.02765)
-
-3. **"Flow-Matching for Scalable Fine-Grained Text-to-Speech"**
-   - Authors: Supertone Research Team
-   - Venue: Interspeech 2024 (submitted)
-   - Key contributions:
-     - Flow matching for TTS (more stable than diffusion)
-     - LARoPE for latent space arithmetic
-     - Classifier-free guidance for controllable generation
-     - Context-sharing batch expansion for efficient inference
-   - [Paper Link](Coming soon)
 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Run tests (`python -m pytest tests/`)
-5. Submit a pull request
-
-## Citation
-
-If you use GRAPE-TTS in your research, please cite:
-
-```bibtex
-@inproceedings{supertone2024tts,
-  title={GRAPE-TTS: Efficient Text-to-Speech with Flow Matching},
-  author={Supertone Inc.},
-  year={2024}
-}
-```
-
-## Support
-
-For issues, questions, or suggestions:
-- Open an issue on GitHub
-- Email: tts-support@supertone.ai
-- Documentation: https://docs.supertone.ai/tts
-
-## Acknowledgments
-
-- Inspired by state-of-the-art TTS systems (Glow-TTS, FastPitch, VITS)
-- Uses Vocos architecture for efficient neural vocoding
-- Hindi text processing leverages indic-nlp-library
-- Evaluation metrics implemented from official implementations
 
 ---
 
