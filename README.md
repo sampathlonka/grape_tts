@@ -1,4 +1,4 @@
-# GRAPE-TTS Hindi - Text-to-Speech Training Repository
+# GRAPE-TTS Hindi - Text-to-Speech (TTS) Training Repository
 
 ## Overview
 
